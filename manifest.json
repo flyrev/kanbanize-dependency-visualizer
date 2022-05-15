@@ -27,6 +27,9 @@
       "js": [
         "js/content.js"
       ],
+      "css": [
+        "css/kanbanizer.css"
+      ],
       "run_at": "document_end"
     }
   ],
