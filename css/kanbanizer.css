@@ -1,0 +1,53 @@
+.kanbanizer-canvas {
+  pointer-events: none;
+  z-index: 100;
+
+  position: absolute;
+  top: 0;
+}
+
+.link-parent {
+  color: gold;
+  stroke: orangered;
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.link-successor {
+  color: red;
+  stroke: red;
+}
+
+.arrow-start-successor,
+.arrow-end-successor {
+  fill: red;
+}
+
+.arrow-start-parent,
+.arrow-end-parent {
+  fill: purple;
+}
+
+div.modal {
+  background-color: transparent;
+}
+
+div.eve-board-column-size.js-board-column-size {
+  display: none;
+}
+
+div.eve-board-column-capacity {
+  display: none;
+}
+
+div.eve-form-field.card-details-deadline {
+  display: none;
+}
+
+div.eve-form-field.card-details-size {
+  margin-left: 0
+}
+
+div.eve-form-field.card-details-tags {
+  display: none;
+}
