@@ -1,3 +1,5 @@
+const mainContainer = ".js-board";
+
 function waitForKeyElements(
   selectorTxt,    /* Required: The jQuery selector string that
                         specifies the desired element(s).
@@ -76,19 +78,19 @@ function waitForKeyElements(
 
 (function () {
   'use strict';
-  waitForKeyElements("#board_container", function (node) {
+  waitForKeyElements(mainContainer, function (node) {
 
     (() => {
-      var CONTAINER_SELECTOR = '.board_view'; //'#board_container .js-board'; // .kb-board
-
       function getVisibleLinks(container) {
-        return d3.select(container).selectAll('.js-card-link,.eve-initiative-link,.js-initiative-link,.eve-card-link').filter(function () { return this.offsetHeight != 0; });
+        const selection = d3.select(container).selectAll('.js-card-link,.eve-initiative-link,.js-initiative-link,.eve-card-link').filter(function () { return this.offsetHeight != 0; });
+        console.log("Visible links: " + selection);
+        return selection;
       }
 
       function buildDefs() {
         let svg = d3.select(document.body).append('svg').attr('id', 'kanbanizer-defs');
 
-        const types = ['successor', 'parent'];
+        const types = ['successor', 'parent', 'predecessor', 'child'];
         let defs = svg.append('defs');
 
         // the "pointers" (arrows) at each side
@@ -154,18 +156,21 @@ function waitForKeyElements(
       }
 
       function initLinkDataFor(node) {
-        if (!document.querySelector('#task_' + node.getAttribute('data-tid'))) {
+        const id = '#task_' + node.getAttribute('data-card-id');
+        if (!document.querySelector('#task_' + node.getAttribute('data-card-id'))) {
+          console.error("Could not find " + id);
           return null
         }
 
-        // This is with visualising from the "line" entry on the predecessor card
+        console.log("Using " + id);
+
         /*
         let data = {
             cards: [
-                document.getElementById('task_' + node.getAttribute('data-tid')),
+                document.getElementById('task_' + node.getAttribute('data-card-id')),
                 node.closest('.js-task'), // .task
-                document.querySelector('#task_' + node.getAttribute('data-tid')).querySelectorAll(".js-card-title, .js-initiative-title")[0],
-                node.closest('[data-tid="' + node.getAttribute('data-tid') + '"]'),
+                document.querySelector('#task_' + node.getAttribute('data-card-id')).querySelectorAll(".js-card-title, .js-initiative-title")[0],
+                node.closest('[data-card-id="' + node.getAttribute('data-card-id') + '"]'),
             ]
         }
         */
@@ -174,10 +179,10 @@ function waitForKeyElements(
         /*
         let data = {
             cards: [
-                document.getElementById('task_' + node.getAttribute('data-tid')),
+                document.getElementById('task_' + node.getAttribute('data-card-id')),
                 node.closest('.js-task').querySelectorAll(".js-card-title, .js-initiative-title")[0], // .task
-                document.querySelector('#task_' + node.getAttribute('data-tid')).querySelectorAll(".js-card-title, .js-initiative-title")[0],
-                //node.closest('[data-tid="' + node.getAttribute('data-tid') + '"]'),
+                document.querySelector('#task_' + node.getAttribute('data-card-id')).querySelectorAll(".js-card-title, .js-initiative-title")[0],
+                //node.closest('[data-card-id="' + node.getAttribute('data-card-id') + '"]'),
             ]
         }
         */
@@ -185,10 +190,10 @@ function waitForKeyElements(
         // Align!
         let data = {
           cards: [
-            document.getElementById('task_' + node.getAttribute('data-tid')),
+            document.getElementById('task_' + node.getAttribute('data-card-id')),
             node.closest('.js-task').querySelectorAll(".js-card-title, .js-initiative-title")[0], // .task
-            document.querySelector('#task_' + node.getAttribute('data-tid')).querySelectorAll(".js-card-title, .js-initiative-title")[0],
-            //node.closest('[data-tid="' + node.getAttribute('data-tid') + '"]'),
+            document.querySelector('#task_' + node.getAttribute('data-card-id')).querySelectorAll(".js-card-title, .js-initiative-title")[0],
+            //node.closest('[data-card-id="' + node.getAttribute('data-card-id') + '"]'),
           ]
         }
 
@@ -196,12 +201,16 @@ function waitForKeyElements(
         var drawParents = false;
 
         if (drawParents && node.getAttribute('data-link-type') == "parent") {
+          console.log("Found a parent");
           data.type = "parent";
         } else if (node.getAttribute('data-link-type') == "successor") {
+          console.log("Found a successor");
           data.type = "successor";
         } else if (drawParents && drawBothWays && node.querySelector('.is-parent')) { // .svg-icon-parent
+          console.log("Found a parent");
           data.type = 'parent';
         } else if (drawBothWays && node.querySelector('.is-successor')) { // .svg-icon-successor
+          console.log("Found a successor");
           data.type = 'successor';
         } else {
           return null
@@ -274,7 +283,10 @@ function waitForKeyElements(
         return getVisibleLinks(container).nodes().map(function (node) {
           let data = initLinkDataFor(node);
 
-          if (!data) return;
+          if (!data) {
+            console.error("No data");
+            return;
+          }
 
           data.points = getLinkPoints(container, data);
 
@@ -356,7 +368,11 @@ function waitForKeyElements(
           .style("stroke-width", "1px")
       }
 
+      //var CONTAINER_SELECTOR = '.board_view'; //'#board_container .js-board'; // .kb-board
+      //var CONTAINER_SELECTOR = '.js-board-holder'; // .kb-board
+      var CONTAINER_SELECTOR = '.js-board'; // .kb-board
       const containers = document.querySelectorAll(CONTAINER_SELECTOR);
+      console.log("Containers:")
       console.log(containers);
 
       if (containers.length > 0) {
@@ -387,12 +403,13 @@ function waitForKeyElements(
         })
       }
 
-      //d3.selectAll('table').each(function() {
-      document.getElementById("board_container").onscroll = function (event) {
+/*
+      d3.selectAll('table').each(function() {
+      //document.getElementById("board_container").onscroll = function (event) {
         handleScroll();
         return true;
       }
-
+*/
       document.addEventListener('mousemove', function (event) {
         if (event.buttons == 1) {
           handleScroll();
