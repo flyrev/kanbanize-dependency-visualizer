@@ -158,7 +158,7 @@ function waitForKeyElements(
       function initLinkDataFor(node) {
         const id = '#task_' + node.getAttribute('data-card-id');
         if (!document.querySelector('#task_' + node.getAttribute('data-card-id'))) {
-          console.error("Could not find " + id);
+          console.info("Could not find " + id);
           return null
         }
 
@@ -284,7 +284,7 @@ function waitForKeyElements(
           let data = initLinkDataFor(node);
 
           if (!data) {
-            console.error("No data");
+            console.info("No data");
             return;
           }
 
