@@ -198,7 +198,7 @@ function waitForKeyElements(
         }
 
         var drawBothWays = false;
-        var drawParents = false;
+        var drawParents = true;
 
         if (drawParents && node.getAttribute('data-link-type') == "parent") {
           console.log("Found a parent");
